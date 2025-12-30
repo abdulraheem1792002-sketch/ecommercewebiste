@@ -163,7 +163,7 @@ function createToastContainer() {
 /**
  * Format Currency
  */
-function formatHash(amount) {
+function formatCurrency(amount) {
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
