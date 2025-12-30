@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | Nexus Shop</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo"><i class="fas fa-bolt"></i> NEXUS</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/products.html" class="nav-link">Shop</a>
+                <a href="/cart.html" class="nav-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" style="display: none;">0</span>
+                </a>
+                <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section">
+        <h1 style="margin-bottom: 2rem;">My Profile</h1>
+
+        <div class="grid" style="grid-template-columns: 250px 1fr; gap: 2rem;">
+            <!-- Sidebar -->
+            <aside>
+                <div class="card">
+                    <div
+                        style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+                        <div
+                            style="width: 80px; height: 80px; background: var(--dark-surface-2); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-secondary);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="sidebar-name" style="margin-bottom: 0.25rem;">user</h3>
+                        <p id="sidebar-email" style="font-size: 0.9rem; color: var(--text-secondary);">email@example.com
+                        </p>
+                    </div>
+
+                    <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="/profile.html" class="btn btn-primary" style="justify-content: flex-start;">
+                            <i class="fas fa-user-cog" style="width: 20px;"></i> Profile Settings
+                        </a>
+                        <a href="/orders.html" class="btn btn-outline"
+                            style="justify-content: flex-start; border: none; color: var(--text-secondary);">
+                            <i class="fas fa-box" style="width: 20px;"></i> Order History
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <main>
+                <div class="card" style="margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                        Personal Information</h3>
+
+                    <form id="profile-form">
+                        <div class="grid grid-2" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" name="name" id="name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" name="email" id="email" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" name="phone" id="phone" class="form-input">
+                            </div>
+                        </div>
+
+                        <h4 style="margin: 1.5rem 0 1rem; color: var(--text-secondary);">Address</h4>
+                        <div class="form-group">
+                            <label class="form-label">Street Address</label>
+                            <input type="text" name="address.street" id="street" class="form-input">
+                        </div>
+                        <div class="grid grid-2" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <input type="text" name="address.city" id="city" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <input type="text" name="address.state" id="state" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Zip Code</label>
+                                <input type="text" name="address.zipCode" id="zipCode" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Country</label>
+                                <input type="text" name="address.country" id="country" class="form-input">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                        Change Password</h3>
+
+                    <form id="password-form">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" name="currentPassword" class="form-input" required>
+                        </div>
+                        <div class="grid grid-2" style="gap: 1.5rem;">
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <input type="password" name="newPassword" class="form-input" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <input type="password" name="confirmPassword" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1rem;">
+                            <button type="submit" class="btn btn-outline">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            if (!state.user) {
+                window.location.href = '/login.html?redirect=/profile.html';
+                return;
+            }
+            loadProfile();
+        });
+
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/users/profile');
+                const data = await response.json();
+                const user = data.user;
+
+                // Update sidebar
+                document.getElementById('sidebar-name').textContent = user.name;
+                document.getElementById('sidebar-email').textContent = user.email;
+
+                // Fill form
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone || '';
+
+                if (user.address) {
+                    document.getElementById('street').value = user.address.street || '';
+                    document.getElementById('city').value = user.address.city || '';
+                    document.getElementById('state').value = user.address.state || '';
+                    document.getElementById('zipCode').value = user.address.zipCode || '';
+                    document.getElementById('country').value = user.address.country || '';
+                }
+
+            } catch (error) {
+                console.error(error);
+                showToast('Failed to load profile', 'error');
+            }
+        }
+
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            const originalText = btn.textContent;
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                address: {
+                    street: formData.get('address.street'),
+                    city: formData.get('address.city'),
+                    state: formData.get('address.state'),
+                    zipCode: formData.get('address.zipCode'),
+                    country: formData.get('address.country')
+                }
+            };
+
+            try {
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Profile updated successfully', 'success');
+                    // Update sidebar immediately
+                    document.getElementById('sidebar-name').textContent = data.name;
+                    document.getElementById('sidebar-email').textContent = data.email;
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Failed to update profile', 'error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.textContent = 'Updating...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/api/users/password', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Password changed successfully', 'success');
+                    e.target.reset();
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Failed to changing password', 'error');
+            } finally {
+                btn.textContent = 'Update Password';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

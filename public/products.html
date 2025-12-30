@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | Nexus Shop</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo"><i class="fas fa-bolt"></i> NEXUS</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/products.html" class="nav-link" style="color: var(--primary);">Shop</a>
+                <div id="auth-links" style="display: flex; gap: 1rem;">
+                    <a href="/login.html" class="btn btn-outline btn-sm">Login</a>
+                    <a href="/register.html" class="btn btn-primary btn-sm">Sign Up</a>
+                </div>
+                <div id="user-menu" class="user-menu" style="display: none;"></div>
+                <a href="/cart.html" class="nav-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" style="display: none;">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section">
+        <div class="grid" style="grid-template-columns: 250px 1fr; gap: 2rem;">
+            <!-- Sidebar -->
+            <aside>
+                <div class="card">
+                    <h3 style="margin-bottom: 1.5rem;">Filters</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">Search</label>
+                        <input type="text" id="search-input" class="form-input" placeholder="Search products...">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="category-filter" class="form-input">
+                            <option value="">All Categories</option>
+                            <!-- Injected via JS -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Price Range</label>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="number" id="min-price" class="form-input" placeholder="Min">
+                            <span>-</span>
+                            <input type="number" id="max-price" class="form-input" placeholder="Max">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Sort By</label>
+                        <select id="sort-filter" class="form-input">
+                            <option value="newest">Newest First</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="name-asc">Name: A to Z</option>
+                        </select>
+                    </div>
+
+                    <button id="apply-filters" class="btn btn-primary" style="width: 100%;">Apply Filters</button>
+                    <button id="reset-filters" class="btn btn-outline"
+                        style="width: 100%; margin-top: 0.5rem;">Reset</button>
+                </div>
+            </aside>
+
+            <!-- Product Grid -->
+            <main>
+                <div style="margin-bottom: 1rem; color: var(--text-secondary);">
+                    Showing <span id="product-count">0</span> products
+                </div>
+                <div id="products-grid" class="grid grid-3">
+                    <div class="loader"></div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination" style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem;">
+                    <!-- Injected via JS -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCategories();
+            loadProducts();
+
+            document.getElementById('apply-filters').addEventListener('click', () => loadProducts(1));
+            document.getElementById('reset-filters').addEventListener('click', resetFilters);
+        });
+
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/products/categories');
+                const data = await response.json();
+                const select = document.getElementById('category-filter');
+
+                data.categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    select.appendChild(option);
+                });
+
+                // Check URL params for category
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category');
+                if (category) select.value = category;
+
+            } catch (error) {
+                console.error('Failed to load categories', error);
+            }
+        }
+
+        async function loadProducts(page = 1) {
+            const container = document.getElementById('products-grid');
+            container.innerHTML = '<div class="loader"></div>';
+
+            const search = document.getElementById('search-input').value;
+            const category = document.getElementById('category-filter').value;
+            const minPrice = document.getElementById('min-price').value;
+            const maxPrice = document.getElementById('max-price').value;
+            const sort = document.getElementById('sort-filter').value;
+
+            const params = new URLSearchParams({
+                page,
+                limit: 9,
+                sort
+            });
+
+            if (search) params.append('search', search);
+            if (category) params.append('category', category);
+            if (minPrice) params.append('minPrice', minPrice);
+            if (maxPrice) params.append('maxPrice', maxPrice);
+
+            try {
+                const response = await fetch(`/api/products?${params}`);
+                const data = await response.json();
+
+                document.getElementById('product-count').textContent = data.pagination.total;
+
+                if (data.products.length === 0) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                            <i class="fas fa-search" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                            <h3>No products found</h3>
+                            <p style="color: var(--text-secondary);">Try adjusting your filters</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.products.map(product => createProductCard(product)).join('');
+
+                renderPagination(data.pagination);
+
+            } catch (error) {
+                container.innerHTML = '<p class="text-danger">Failed to load products</p>';
+            }
+        }
+
+        function renderPagination(pagination) {
+            const container = document.getElementById('pagination');
+            let html = '';
+
+            if (pagination.totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            // Previous
+            html += `
+                <button 
+                    onclick="loadProducts(${pagination.page - 1})"
+                    class="btn btn-outline btn-sm"
+                    ${pagination.page === 1 ? 'disabled style="opacity:0.5"' : ''}
+                >Previous</button>
+            `;
+
+            // Pages
+            for (let i = 1; i <= pagination.totalPages; i++) {
+                html += `
+                    <button 
+                        onclick="loadProducts(${i})"
+                        class="btn btn-sm ${i === pagination.page ? 'btn-primary' : 'btn-outline'}"
+                    >${i}</button>
+                `;
+            }
+
+            // Next
+            html += `
+                <button 
+                    onclick="loadProducts(${pagination.page + 1})"
+                    class="btn btn-outline btn-sm"
+                    ${pagination.page === pagination.totalPages ? 'disabled style="opacity:0.5"' : ''}
+                >Next</button>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-filter').value = '';
+            document.getElementById('min-price').value = '';
+            document.getElementById('max-price').value = '';
+            document.getElementById('sort-filter').value = 'newest';
+            loadProducts(1);
+        }
+    </script>
+</body>
+
+</html>

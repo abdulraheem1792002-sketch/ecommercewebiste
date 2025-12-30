@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History | Nexus Shop</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo"><i class="fas fa-bolt"></i> NEXUS</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/products.html" class="nav-link">Shop</a>
+                <a href="/cart.html" class="nav-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" style="display: none;">0</span>
+                </a>
+                <button onclick="logout()" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container section">
+        <h1 style="margin-bottom: 2rem;">Order History</h1>
+
+        <div class="grid" style="grid-template-columns: 250px 1fr; gap: 2rem;">
+            <!-- Sidebar -->
+            <aside>
+                <div class="card">
+                    <div
+                        style="text-align: center; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);">
+                        <div
+                            style="width: 80px; height: 80px; background: var(--dark-surface-2); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-secondary);">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 id="sidebar-name" style="margin-bottom: 0.25rem;">User</h3>
+                        <p id="sidebar-email" style="font-size: 0.9rem; color: var(--text-secondary);">email@example.com
+                        </p>
+                    </div>
+
+                    <nav style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="/profile.html" class="btn btn-outline"
+                            style="justify-content: flex-start; border: none; color: var(--text-secondary);">
+                            <i class="fas fa-user-cog" style="width: 20px;"></i> Profile Settings
+                        </a>
+                        <a href="/orders.html" class="btn btn-primary" style="justify-content: flex-start;">
+                            <i class="fas fa-box" style="width: 20px;"></i> Order History
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <main id="orders-container">
+                <div class="loader"></div>
+            </main>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            if (!state.user) {
+                window.location.href = '/login.html?redirect=/orders.html';
+                return;
+            }
+            // Fill sidebar
+            document.getElementById('sidebar-name').textContent = state.user.name;
+            document.getElementById('sidebar-email').textContent = state.user.email;
+
+            loadOrders();
+        });
+
+        async function loadOrders() {
+            try {
+                const response = await fetch('/api/orders');
+                const data = await response.json();
+                renderOrders(data.orders);
+            } catch (error) {
+                console.error('Failed to load orders', error);
+                document.getElementById('orders-container').innerHTML = '<p class="text-danger">Failed to load orders.</p>';
+            }
+        }
+
+        function renderOrders(orders) {
+            const container = document.getElementById('orders-container');
+
+            if (orders.length === 0) {
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-box-open" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h3>No orders yet</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Looks like you haven't made any purchases yet.</p>
+                        <a href="/products.html" class="btn btn-primary">Start Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.25rem;">
+                                Order #${order.orderNumber}
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                Placed on ${new Date(order.createdAt).toLocaleDateString()}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="badge ${getStatusBadgeClass(order.status)}">${order.status.toUpperCase()}</div>
+                            <div style="margin-top: 0.5rem; font-weight: 600;">$${order.total}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        ${order.items.map(item => `
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500;">${item.name}</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Qty: ${item.quantity}</div>
+                                </div>
+                                <div>$${(item.price * item.quantity).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                        <button onclick="viewOrderDetails('${order.id}')" class="btn btn-outline btn-sm" style="width: 100%;">
+                            View Order Details
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'delivered': return 'badge-new'; // Green from CSS
+                case 'cancelled': return 'badge-sale'; // Red from CSS
+                case 'pending': return 'badge-warning'; // Need to add warning
+                default: return 'badge-primary';
+            }
+        }
+
+        async function viewOrderDetails(id) {
+            // Implementation for modal
+            // simplifying to alert due to time constraints, but a real app would use a modal
+            // better yet, redirect to dedicated page or expand in place.
+            // For now, let's keep it simple.
+
+            try {
+                const response = await fetch(`/api/orders/${id}`);
+                const data = await response.json();
+                const order = data.order;
+
+                // Pretty basic alert for details
+                alert(`Order Details:\n\nStatus: ${order.status}\nShipping to: ${order.shippingAddress.street}, ${order.shippingAddress.city}\n\nTracking: ${order.statusHistory.map(h => `${h.status} - ${new Date(h.timestamp).toLocaleDateString()}`).join('\n')}`);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    </script>
+    <style>
+        .badge-warning {
+            background: var(--warning);
+            color: black;
+        }
+
+        .badge-primary {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</body>
+
+</html>

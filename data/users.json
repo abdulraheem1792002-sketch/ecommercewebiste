@@ -1,0 +1,56 @@
+[
+  {
+    "id": "mjs7angq1jzhvqtho09",
+    "name": "sdfg",
+    "email": "abcd@gmail.com",
+    "password": "$2b$10$vXC6Nd75pVW/OeoDUpnDheEojc9xpcZoOE3JAcRHjFOYy1n.9D0uC",
+    "role": "admin",
+    "avatar": null,
+    "phone": "",
+    "address": {
+      "street": "",
+      "city": "",
+      "state": "",
+      "zipCode": "",
+      "country": ""
+    },
+    "createdAt": "2025-12-30T06:23:01.706Z",
+    "updatedAt": "2025-12-30T06:23:01.706Z"
+  },
+  {
+    "id": "mjs7e1h5u0trskq0i8a",
+    "name": "Admin User",
+    "email": "admin@example.com",
+    "password": "$2b$10$zWMF5eLBtQIrp9C9tp/6HuZ5sbZdlpKfEQFMhs/3CwA9Esmwxq1.a",
+    "role": "customer",
+    "avatar": null,
+    "phone": "",
+    "address": {
+      "street": "",
+      "city": "",
+      "state": "",
+      "zipCode": "",
+      "country": ""
+    },
+    "createdAt": "2025-12-30T06:25:39.834Z",
+    "updatedAt": "2025-12-30T06:25:39.834Z"
+  },
+  {
+    "id": "mjs7npotfo0ys85681j",
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "$2b$10$qkgNJyNelelHsM7z5ycvwejWhLwL4/JIB1lTX3BHgdCpYr9pX878C",
+    "role": "customer",
+    "avatar": null,
+    "phone": "",
+    "address": {
+      "street": "",
+      "city": "",
+      "state": "",
+      "zipCode": "",
+      "country": ""
+    },
+    "createdAt": "2025-12-30T06:33:11.118Z",
+    "updatedAt": "2025-12-30T06:33:11.119Z"
+  }
+]
