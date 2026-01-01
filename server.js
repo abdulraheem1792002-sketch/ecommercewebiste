@@ -37,6 +37,9 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
+app.get('/api', (req, res) => {
+    res.json({ message: 'E-commerce API is running' });
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
